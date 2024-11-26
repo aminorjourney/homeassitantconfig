@@ -1,0 +1,81 @@
+# Configure a default setup of Home Assistant (frontend, api, etc)
+default_config:
+
+# Text to speech
+tts:
+  - platform: google_translate
+
+group: !include groups.yaml
+
+api: !include api.yaml
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+sensor: !include sensor.yaml
+sensor: !include integration_sensors.yaml
+switch: !include switch.yaml
+energy: !include energy.yaml
+binary_sensor: !include binary_sensor.yaml
+template: !include bolt_ev.yaml
+template: !include ford_pass.yaml
+template: !include charging_stations.yaml
+template: !include open_weather_map.yaml
+template: !include ns_panel_helper_sensors.yaml
+
+
+homeassistant:
+  customize: !include customize.yaml
+  # customize_domain: !include customize_domain.yaml
+
+config_editor:
+frontend:
+  themes: !include_dir_merge_named themes
+  extra_module_url:
+    - /hacsfiles/lovelace-card-mod/card-mod.js
+
+device_tracker:
+  - platform: mqtt_json
+    devices:
+      orion: homeassistant/device_tracker/<Bolt_VIN>/getlocation/state
+
+calendar:
+  - platform: caldav
+    url: https://caldav.icloud.com
+    username: <email>
+    password: <PASSWORD>
+    calendars:
+      - Home; Work
+
+  - platform: caldav
+    url: https://caldav.icloud.com
+    username: <email>
+    password: <PASSWORD>
+        calendars:
+      - Family Stuff
+
+# Allow Phyton Scripts
+python_script:
+
+shell_command:
+  curl_get: "curl -X GET {{ url }}"
+
+template:
+  - trigger:
+      - platform: time_pattern
+        hours: /1
+    action:
+      - service: weather.get_forecasts
+        data:
+          type: daily
+        target:
+          entity_id: weather.openweathermap # change to your weather entity
+        response_variable: daily
+
+        # WeatherForecast Daily
+    sensor:
+      - name: Weather Forecast Daily
+        unique_id: weather_forecast_daily
+        state: "{{ states('weather.openweathermap') }}" # # change to your weather entity in this line
+        attributes:
+          temperature: "{{ state_attr('weather.openweathermap', 'temperature') }}" # change to your weather entity
+          temperature_unit: "{{ state_attr('weather.openweathermap', 'temperature_unit') }}" # change to your weather entity
