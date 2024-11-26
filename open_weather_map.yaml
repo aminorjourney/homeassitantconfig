@@ -1,0 +1,138 @@
+# ===============================
+# OpenWeatherMap Air Quality Current
+# ===============================
+template:
+  - sensor:
+      # Air Quality Index
+      - unique_id: openweathermap_air_quality_index
+        name: "Openweathermap: Air Quality Index"
+        state: "{{ state_attr('sensor.openweathermap_air_pollution', 'main')['aqi'] }}"
+        device_class: aqi
+
+      # Carbon Monoxide CO
+      - unique_id: openweathermap_carbon_monoxide
+        name: "Openweathermap: Carbon Monoxide CO"
+        state: "{{ '%.2f' | format(state_attr('sensor.openweathermap_air_pollution', 'components')['co'] / 100) }}"
+        unit_of_measurement: 'µg/m³'
+        device_class: carbon_monoxide
+
+      # Nitrogen Monoxide NO
+      - unique_id: openweathermap_nitrogen_monoxide
+        name: "Openweathermap: Nitrogen Monoxide NO"
+        state: "{{ state_attr('sensor.openweathermap_air_pollution', 'components')['no'] }}"
+        unit_of_measurement: 'µg/m³'
+        device_class: nitrogen_monoxide
+
+      # Nitrogen Dioxide NO2
+      - unique_id: openweathermap_nitrogen_dioxide
+        name: "Openweathermap: Nitrogen Dioxide NO2"
+        state: "{{ state_attr('sensor.openweathermap_air_pollution', 'components')['no2'] }}"
+        unit_of_measurement: 'µg/m³'
+        device_class: nitrogen_dioxide
+
+      # Ozone O3
+      - unique_id: openweathermap_ozone
+        name: "Openweathermap: Ozone O3"
+        state: "{{ state_attr('sensor.openweathermap_air_pollution', 'components')['o3'] }}"
+        unit_of_measurement: 'µg/m³'
+        device_class: ozone
+
+      # Sulfur Dioxide SO2
+      - unique_id: openweathermap_sulfur_dioxide
+        name: "Openweathermap: Sulfur Dioxide SO2"
+        state: "{{ state_attr('sensor.openweathermap_air_pollution', 'components')['so2'] }}"
+        unit_of_measurement: 'µg/m³'
+        device_class: sulphur_dioxide
+
+      # Particulate Matter 2.5 PM2.5
+      - unique_id: openweathermap_particulate_matter_2_5
+        name: "Openweathermap: PM 2.5"
+        state: "{{ state_attr('sensor.openweathermap_air_pollution', 'components')['pm2_5'] }}"
+        unit_of_measurement: 'µg/m³'
+        device_class: pm25
+
+      # Particulate Matter 10 PM10
+      - unique_id: openweathermap_particulate_matter_10
+        name: "Openweathermap: PM 10"
+        state: "{{ state_attr('sensor.openweathermap_air_pollution', 'components')['pm10'] }}"
+        unit_of_measurement: 'µg/m³'
+        device_class: pm10
+
+      # Ammonia NH3
+      - unique_id: openweathermap_ammonia
+        name: "Openweathermap: Ammonia NH3"
+        state: "{{ state_attr('sensor.openweathermap_air_pollution', 'components')['nh3'] }}"
+        unit_of_measurement: 'µg/m³'
+        icon: mdi:molecule
+
+# ===============================
+# OpenWeatherMap Air Quality Forecast
+# ===============================
+
+      # Forecast Date
+      - unique_id: openweathermap_forecast_air_pollution_forecast_date
+        name: "Openweathermap Forecast: Air Pollution Forecast Date"
+        state: "{{ state_attr('sensor.openweathermap_forecast_air_pollution', 'dt') | timestamp_custom('%Y-%m-%d') }}"
+        device_class: date
+
+      # Forecast Air Quality Index
+      - unique_id: openweathermap_forecast_air_quality_index
+        name: "Openweathermap Forecast: Air Quality Index"
+        state: "{{ state_attr('sensor.openweathermap_forecast_air_pollution', 'main')['aqi'] }}"
+        device_class: aqi
+
+      # Forecast Carbon Monoxide CO
+      - unique_id: openweathermap_forecast_carbon_monoxide
+        name: "Openweathermap Forecast: Carbon Monoxide CO"
+        state: "{{ '%.2f' | format(state_attr('sensor.openweathermap_forecast_air_pollution', 'components')['co'] / 100) }}"
+        unit_of_measurement: 'µg/m³'
+        device_class: carbon_monoxide
+
+      # Forecast Nitrogen Monoxide NO
+      - unique_id: openweathermap_forecast_nitrogen_monoxide
+        name: "Openweathermap Forecast: Nitrogen Monoxide NO"
+        state: "{{ state_attr('sensor.openweathermap_forecast_air_pollution', 'components')['no'] }}"
+        unit_of_measurement: 'µg/m³'
+        device_class: nitrogen_monoxide
+
+      # Forecast Nitrogen Dioxide NO2
+      - unique_id: openweathermap_forecast_nitrogen_dioxide
+        name: "Openweathermap Forecast: Nitrogen Dioxide NO2"
+        state: "{{ state_attr('sensor.openweathermap_forecast_air_pollution', 'components')['no2'] }}"
+        unit_of_measurement: 'µg/m³'
+        device_class: nitrogen_dioxide
+
+      # Forecast Ozone O3
+      - unique_id: openweathermap_forecast_ozone
+        name: "Openweathermap Forecast: Ozone O3"
+        state: "{{ state_attr('sensor.openweathermap_forecast_air_pollution', 'components')['o3'] }}"
+        unit_of_measurement: 'µg/m³'
+        device_class: ozone
+
+      # Forecast Sulfur Dioxide SO2
+      - unique_id: openweathermap_forecast_sulfur_dioxide
+        name: "Openweathermap Forecast: Sulfur Dioxide SO2"
+        state: "{{ state_attr('sensor.openweathermap_forecast_air_pollution', 'components')['so2'] }}"
+        unit_of_measurement: 'µg/m³'
+        device_class: sulphur_dioxide
+
+      # Forecast Particulate Matter 2.5 PM2.5
+      - unique_id: openweathermap_forecast_particulate_matter_2_5
+        name: "Openweathermap Forecast: PM 2.5"
+        state: "{{ state_attr('sensor.openweathermap_forecast_air_pollution', 'components')['pm2_5'] }}"
+        unit_of_measurement: 'µg/m³'
+        device_class: pm25
+
+      # Forecast Particulate Matter 10 PM10
+      - unique_id: openweathermap_forecast_particulate_matter_10
+        name: "Openweathermap Forecast: PM 10"
+        state: "{{ state_attr('sensor.openweathermap_forecast_air_pollution', 'components')['pm10'] }}"
+        unit_of_measurement: 'µg/m³'
+        device_class: pm10
+
+      # Forecast Ammonia NH3
+      - unique_id: openweathermap_forecast_ammonia
+        name: "Openweathermap Forecast: Ammonia NH3"
+        state: "{{ state_attr('sensor.openweathermap_forecast_air_pollution', 'components')['nh3'] }}"
+        unit_of_measurement: 'µg/m³'
+        icon: mdi:molecule

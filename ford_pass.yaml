@@ -1,0 +1,43 @@
+# ===============================
+# Ford F150 Lightning Templates
+# ===============================
+
+template:
+  - sensor:
+      # Battery Sensors
+      - unique_id: ford_traction_battery_soc
+        name: "Ford battery charge"
+        state: "{{ state_attr('sensor.fordpass_elveh', 'Battery Charge') }}"
+        unit_of_measurement: "%"
+        icon: mdi:battery
+
+      - unique_id: ford_12v_battery_voltage
+        name: "Ford 12V battery"
+        state: "{{ state_attr('sensor.fordpass_battery', 'Battery Voltage') }}"
+        unit_of_measurement: "V"
+        icon: mdi:battery
+
+      # Tyre Pressure Sensors
+      - unique_id: f150_rear_left_tyre
+        name: "F150 rear left tyre"
+        state: "{{ state_attr('sensor.fordpass_tirepressure', 'REAR_LEFT') }}"
+        unit_of_measurement: "PSI"
+        icon: mdi:car-tire-alert
+
+      - unique_id: f150_front_left_tyre
+        name: "F150 front left tyre"
+        state: "{{ state_attr('sensor.fordpass_tirepressure', 'FRONT_LEFT') }}"
+        unit_of_measurement: "PSI"
+        icon: mdi:car-tire-alert
+
+      - unique_id: f150_rear_right_tyre
+        name: "F150 rear right tyre"
+        state: "{{ state_attr('sensor.fordpass_tirepressure', 'REAR_RIGHT') }}"
+        unit_of_measurement: "PSI"
+        icon: mdi:car-tire-alert
+
+      - unique_id: f150_front_right_tire
+        name: "F150 front right tyre"
+        state: "{{ state_attr('sensor.fordpass_tirepressure', 'FRONT_RIGHT') }}"
+        unit_of_measurement: "PSI"
+        icon: mdi:car-tire-alert

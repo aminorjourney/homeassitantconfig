@@ -1,0 +1,48 @@
+# ===============================
+# Integration Sensors for Charging Station Energy Monitoring
+# ===============================
+
+  # Charge Station Pro Energy Accumulated
+  - platform: integration
+    source: sensor.chargestation_pro_power
+    name: "Charge Station Pro Energy Accumulated"
+    unique_id: chargestation_pro_energy_accumulated
+    method: left
+    round: 2
+    scan_interval: 30  # Calculate every 30 seconds
+
+  # Span Drive Energy Accumulated
+  - platform: integration
+    source: sensor.span_drive_ev_power
+    name: "Span Drive Energy Accumulated"
+    unique_id: span_drive_energy_accumulated
+    method: left
+    round: 2
+    scan_interval: 30  # Calculate every 30 seconds
+
+  # Session Charging Energy Span Drive
+  - platform: integration
+    source: sensor.span_drive_ev_power
+    name: "Session Charging Energy Span Drive"
+    unique_id: session_charging_energy_span_drive
+    method: left
+    round: 2
+    scan_interval: 30  # Calculate every 30 seconds
+
+  # Juice Box Top Energy Accumulated
+  - platform: integration
+    source: sensor.juice_box_top_power  # Ensure this sensor exists
+    name: "Juice Box Top Energy Accumulated"
+    unique_id: juice_box_top_energy_accumulated
+    method: left
+    round: 2
+    scan_interval: 30  # Calculate every 30 seconds
+
+  # Juice Box Bottom Energy Accumulated
+  - platform: integration
+    source: sensor.juice_box_bottom_power  # Ensure this sensor exists
+    name: "Juice Box Bottom Energy Accumulated"
+    unique_id: juice_box_bottom_energy_accumulated
+    method: left
+    round: 2
+    scan_interval: 30  # Calculate every 30 seconds
