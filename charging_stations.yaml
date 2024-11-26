@@ -1,0 +1,151 @@
+template:
+  - sensor:
+      # ===============================
+      # Charge Station Pro Charging
+      # ===============================
+      - unique_id: f150_lightning_charge_rate
+        name: "Ford_F150_Lightning_Charge_Rate"
+        state: "{{ state_attr('sensor.fordpass_elvehcharging', 'Charging kW') | float }}"
+        unit_of_measurement: "kW"
+        icon: mdi:truck
+
+      - unique_id: ford_charge_station_power_flow
+        name: "Charge_Station_Pro_Power_Flow"
+        state: "{{ state_attr('sensor.fordpass_elvehcharging', 'Charging Status') }}"
+
+      - unique_id: ford_charge_station_pro_current
+        name: "Ford Charge Station Pro Current"
+        unit_of_measurement: "A"
+        state: >
+          {% set charging_power = states('sensor.chargestation_pro_power') | float * 1000 %}
+          {% set feed_in_power = states('sensor.f150_feed_in_power') | float * 1000 %}
+          {% set total_voltage = states('sensor.total_home_voltage') | float %}
+          {% if is_state('sensor.ford_charge_station_pro_power_status', 'Charging Vehicle') and charging_power > 0 and total_voltage > 0 %}
+            {{ (charging_power / total_voltage) | round(2) }}
+          {% elif is_state('sensor.ford_charge_station_pro_power_status', 'Powering Home') and feed_in_power > 0 and total_voltage > 0 %}
+            {{ (feed_in_power / total_voltage) | round(2) }}
+          {% else %}
+            0
+          {% endif %}
+
+      - unique_id: ford_charge_station_pro_power_status
+        name: "Ford Charge Station Pro Power Status"
+        state: >
+          {% if states('sensor.chargestation_pro_power') | float > 0.4 %}
+            Charging Vehicle
+          {% elif states('sensor.f150_feed_in_power') | float > 0.4 %}
+            Powering Home
+          {% elif is_state('device_tracker.fordpass_tracker', 'Home') %}
+            {{ states('sensor.ford_charge_station_power_flow') }}
+          {% else %}
+            Idle
+          {% endif %}
+
+      - unique_id: ford_charge_station_pro_power_transfer
+        name: "Ford Charge Station Pro Power Transfer"
+        state: >
+          {% if is_state('sensor.ford_charge_station_pro_power_status', 'Charging Vehicle') %}
+            {{ states('sensor.chargestation_pro_power') }}
+          {% elif is_state('sensor.ford_charge_station_pro_power_status', 'Powering Home') %}
+            {{ states('sensor.f150_feed_in_power') }}
+          {% else %}
+            0
+          {% endif %}
+
+      - unique_id: ford_charge_station_pro_power_transfer_formatted
+        name: "Ford Charge Station Pro Power Transfer Formatted"
+        state: >
+          {% if is_state('sensor.ford_charge_station_pro_power_status', 'Charging Vehicle') %}
+            {{ "{:.2f}".format(states('sensor.chargestation_pro_power') | float) }} kW
+          {% elif is_state('sensor.ford_charge_station_pro_power_status', 'Powering Home') %}
+            {{ "{:.2f}".format(states('sensor.f150_feed_in_power') | float) }} kW
+          {% else %}
+            N/A
+          {% endif %}
+
+      - unique_id: f150_feed_in_power_formatted
+        name: "F150 Feed In Power Formatted"
+        state: "{{ '{:.2f}'.format(states('sensor.f150_feed_in_power') | float) }} kW"
+
+      - unique_id: home_integration_backup
+        name: "F150 Feed-In Power kW"
+        state: "{{ (states('sensor.emporia_vue2b_f150_lightning_power') | float(default=0.0)) * 0.001 | round(1) }}"
+        unit_of_measurement: "kW"
+
+      - unique_id: ford_charge_station_pro_lifetime_energy
+        name: "Ford Charge Station Pro Lifetime Energy"
+        state: "{{ (((states('sensor.charge_station_pro_energy_accumulated') | float) + 11732) * 0.001) }}"
+        unit_of_measurement: "MWh"
+
+      - unique_id: charge_station_pro_network_status
+        name: "Charge Station Pro Online Status"
+        icon: mdi:wifi-cog
+        state: >
+          {% if is_state('binary_sensor.ford_charge_station_pro_connectivity', 'on') %}
+            Online
+          {% elif is_state('binary_sensor.ford_charge_station_pro_connectivity', 'off') %}
+            Offline
+          {% else %}
+            Unknown
+          {% endif %}          
+
+      - unique_id: charge_station_pro
+        name: "Charge Station Pro Charging Rate"
+        state: >
+          {% set power = (states('sensor.emporia_vue2b_ford_charge_station_pro_power') | float(default=0) / 1000) %}
+          {{ 0 if power < 0 else power }}
+        unit_of_measurement: "kW"
+        device_class: power
+
+      # ===============================
+      # JuiceBoxes Charging
+      # ===============================
+
+      - unique_id: juice_box_top_network_status
+        name: "Juice Box Top Online Status"
+        icon: mdi:wifi-cog
+        state: >
+          {% if is_state('binary_sensor.juice_box_top_online', 'on') %}
+            Online
+          {% elif is_state('binary_sensor.juice_box_top_online', 'off') %}
+            Offline
+          {% else %}
+            Unknown
+          {% endif %}
+
+      - unique_id: juicebox_bottom_network_status
+        name: "Juice Box Bottom Online Status"
+        icon: mdi:wifi-cog
+        state: >
+          {% if is_state('binary_sensor.juice_box_bottom_online', 'on') %}
+            Online
+          {% elif is_state('binary_sensor.juice_box_bottom_online', 'off') %}
+            Offline
+          {% else %}
+            Unknown
+          {% endif %}
+
+      # ===============================
+      # SpanDrive Charging
+      # ===============================
+
+      - unique_id: span_drive_ev_current
+        name: "Span Drive EV Current"
+        state: >
+          {% set span_drive_power = states('sensor.span_drive_ev_power') | float(default=0) * 1000 %}
+          {% set total_voltage = states('sensor.total_home_voltage') | float(default=0) %}
+          {% if is_state('sensor.span_drive_charging_status', 'Charging') and span_drive_power > 0 and total_voltage > 0 %}
+            {{ (span_drive_power / total_voltage) | round(2) }}
+          {% else %}
+            0
+          {% endif %}
+        unit_of_measurement: "A"
+
+      - unique_id: span_drive_charging_status
+        name: "Span Drive Charging Status"
+        state: >
+          {% if is_state('binary_sensor.charging_session_span_drive_active', 'on') %}
+            Charging
+          {% else %}
+            Not Charging
+          {% endif %}
