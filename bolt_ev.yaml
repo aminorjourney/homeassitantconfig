@@ -1,0 +1,10 @@
+# ===============================
+# Onstar Templates
+# ===============================
+template:
+  - sensor:      
+      # Onstar Last Updated
+      - unique_id: onstar_lastupdate
+        name: "Onstar Last Updated"
+        state: "{{ state_attr('sensor.2017_chevrolet_bolt_ev_ev_range_mi', 'last-changed') }}"
+        device_class: timestamp

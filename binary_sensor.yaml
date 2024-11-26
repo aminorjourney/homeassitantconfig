@@ -1,0 +1,27 @@
+#  - platform: template
+#   sensors:
+#      charging_session_active:
+#        friendly_name: "Charging Session Active"
+#       value_template: "{{ states('sensor.chargestation_pro_power') | float > 0.2 }}"
+
+  - platform: template
+    sensors:
+      charging_session_ford_charge_station_pro_active:
+        friendly_name: "Ford Charge Station Pro Charging Session"
+        value_template: >
+          {{ states('sensor.chargestation_pro_power') | float > 0.2 }}
+
+      charging_session_span_drive_active:
+        friendly_name: "Span Drive Active Charging Session"
+        value_template: >
+          {{ states('sensor.span_drive_ev_power') | float > 0.1 }}
+
+      charging_session_juice_box_top_active:
+        friendly_name: "Juice Box Top Active Charging Session"
+        value_template: >
+          {{ states('sensor.juice_box_top_status') | lower == 'charging' }}
+
+      charging_session_juice_box_bottom_active:
+        friendly_name: "Juice Box Bottom Active Charging Session"
+        value_template: >
+          {{ states('sensor.juice_box_bottom_status') | lower == 'charging' }}
