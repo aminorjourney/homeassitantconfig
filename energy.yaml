@@ -1,0 +1,100 @@
+template:
+  - sensor:
+      # ===============================
+      # Power Flow Calculation
+      # ===============================
+
+      # Calculated Solar Export to Grid
+      - unique_id: exported_solar_to_grid
+        name: "Solar Export"
+        state: >
+          {% set power = (states('sensor.envoy_<envoy_serial_number>_current_power_production') | float(default=0) * 1000) - 
+                         states('sensor.emporia_vue2a_total_power') | float(default=0) - 
+                         states('sensor.current_power') | float(default=0) - 
+                         states('sensor.emporia_vue2b_ford_charge_station_pro_power') | float(default=0) %}
+          {{ power | max(0) }}
+        unit_of_measurement: "W"
+        device_class: power
+
+      # House Energy
+      - unique_id: house_energy_total
+        name: "House Energy"
+        state: >
+          {% set power = (states('sensor.emporia_vue2a_total_power') | float(default=0) + 
+                          states('sensor.current_power') | float(default=0) + 
+                          states('sensor.emporia_vue2b_ford_charge_station_pro_power') | float(default=0) * 1000) | round(3) %}
+          {{ power if power > 0 else 0 }}
+        unit_of_measurement: "W"
+        device_class: power
+
+      # Total House Grid Energy
+      - unique_id: house_grid_energy_total
+        name: "Total House Grid Energy"
+        state: >
+          {% set power = (states('sensor.emporia_vue2a_total_power') | float(default=0) + 
+                          states('sensor.current_power') | float(default=0) + 
+                          states('sensor.emporia_vue2b_ford_charge_station_pro_power') | float(default=0) - 
+                          (states('sensor.envoy_<envoy_serial_number>_current_power_production') | float(default=0) * 1000)) | round(3) %}
+          {{ 0 if power < 0 else power }}
+        unit_of_measurement: "W"
+        device_class: power
+
+      # House Consumption Breakers Only
+      - unique_id: house_consumption_breakers_only
+        name: "Breaker Box Consumption"
+        state: "{{ (states('sensor.emporia_vue2a_total_power') | float(default=0) + states('sensor.current_power') | float(default=0)) | round(3) }}"
+        unit_of_measurement: "W"
+        device_class: power
+
+      # ===============================
+      # Derived Power Sensors - For Dashboard Use
+      # ===============================
+
+      # Aquanta Hot Water Heater Percentage
+      - unique_id: hot_water_available
+        name: "Percent Hot Water In Tank"
+        state: "{{ (states('sensor.aquanta_hot_water_available') | float(default=0) * 1) | round(1) }}"
+        unit_of_measurement: "%"
+
+      # Server Room Power
+      - unique_id: server_room_power
+        name: "Server Room Total Power"
+        state: >
+          {{
+            (states('sensor.emporia_vue2a_server_room_power_phase_a') | float(default=0) +
+             states('sensor.emporia_vue2a_server_room_power_phase_b') | float(default=0))
+            | round(3)
+          }}
+        unit_of_measurement: "W"
+
+      # Total Home Voltage
+      - unique_id: total_voltage
+        name: "Mains Voltage"
+        state: >
+          {{
+            (states('sensor.emporia_vue2b_phase_a_voltage') | float(default=0) +
+             states('sensor.emporia_vue2b_phase_b_voltage') | float(default=0))
+            | round(2)
+          }}
+        unit_of_measurement: "V"
+
+      # Water and Septic Power
+      - unique_id: water_and_septic_power
+        name: "Water Pump and Septic Power"
+        state: >
+          {{
+            (states('sensor.emporia_vue2b_pump_house_power_phase_a') | float(default=0) +
+             states('sensor.emporia_vue2b_pump_house_power_phase_b') | float(default=0) +
+             states('sensor.emporia_vue2a_septic_system_power') | float(default=0) +
+             states('sensor.emporia_vue2b_circuit_11_power') | float(default=0))
+            | round(3)
+          }}
+        unit_of_measurement: "W"
+
+      # Total HVAC Power
+      - unique_id: house_hvac_power
+        name: "Total HVAC Power"
+        state: "{{ (states('sensor.emporia_vue2a_heat_pump_power') | float(default=0) + 
+                    states('sensor.emporia_vue2a_server_room_ac_power') | float(default=0)) | round(3) }}"
+        unit_of_measurement: "W"
+        device_class: power
